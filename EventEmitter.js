@@ -1,6 +1,7 @@
 /**
  * 一个事件模型（发布者，订阅者模型）
  */
+
 let _listenerId = 1
 
 class EventEmitter {
