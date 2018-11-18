@@ -18,7 +18,6 @@ class EventEmitter {
       return item.handle(data)
     })
   }
-
   /* 监听事件 */
   listen(event, handle) {
     const {_listenersObj} = this
