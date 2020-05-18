@@ -154,3 +154,30 @@ class MyPromise {
     })
     }
 }
+
+/*20行精简版*/
+function Promise(excutor) {
+  this.callbacks = [];
+
+  function resolve(value) {
+    setTimeout(() => {
+      this.data = value;
+      this.callbacks.forEach((callback) => callback(value));
+    });
+  }
+
+  excutor(resolve.bind(this));
+}
+
+Promise.prototype.then = function (onResolved) {
+  return new Promise((resolve) => {
+    this.callbacks.push(() => {
+      const result = onResolved(this.data);
+      if (result instanceof Promise) {
+        result.then(resolve);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
