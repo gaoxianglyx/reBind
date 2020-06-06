@@ -22,3 +22,5 @@ function useEffect(callback, depArray) {
     memoizedState[cursor] = depArray;
   }
   cursor++;
+
+/*好文：https://github.com/brickspert/blog/issues/26*/
