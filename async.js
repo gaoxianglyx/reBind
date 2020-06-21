@@ -1,3 +1,22 @@
+/**
+ * async的执行原理
+ * 其实就是自动执行generator函数
+ * 暂时不考虑genertor的编译步骤（更复杂）
+ */
+
+const getData = () =>
+  new Promise(resolve => setTimeout(() => resolve("data"), 1000))
+
+  // async函数会被编译成generator函数 (babel会编译成更本质的形态，这里我们直接用generator)
+function* testG() {
+  // await被编译成了yield
+  const data = getData()
+  console.log('data: ', data);
+  const data2 = yield getData()
+  console.log('data2: ', data2);
+  return data + '123'
+}
+
 function asyncToGenerator(generatorFunc) {
   // 返回的是一个新的函数
   return function() {
@@ -23,7 +42,7 @@ function asyncToGenerator(generatorFunc) {
           generatorResult = gen[key](arg)
         } catch (error) {
           return reject(error)
-        }
+        }     
 
         // gen.next() 得到的结果是一个 { value, done } 的结构
         const { value, done } = generatorResult
@@ -43,7 +62,7 @@ function asyncToGenerator(generatorFunc) {
             // 这个value对应的是yield后面的promise
             value
           ).then(
-            // value这个promise被resove的时候，就会执行next
+            // value这个promise被resolve的时候，就会执行next
             // 并且只要done不是true的时候 就会递归的往下解开promise
             // 对应gen.next().value.then(value => {
             //    gen.next(value).value.then(value2 => {
@@ -69,3 +88,9 @@ function asyncToGenerator(generatorFunc) {
     })
   }
 }
+
+/*执行试试*/
+const testGAsync = asyncToGenerator(testG)
+testGAsync().then(result => {
+  console.log(result)
+})
